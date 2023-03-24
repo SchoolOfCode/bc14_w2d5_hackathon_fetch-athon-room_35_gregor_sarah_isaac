@@ -45,7 +45,7 @@ async function fetchPokemon(pokemon, user) {
     let apiData1 = await apiRequest1.json();
   
     if (user === 1) {
-      playerNominatedPokemon.name = apiData1.name;
+      playerNominatedPokemon.name = apiData1.name; 
       playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
       playerNominatedPokemon.sprite = apiData1.sprites.front_default;
       console.log(playerNominatedPokemon.baseHP);
