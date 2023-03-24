@@ -89,6 +89,7 @@ function battle() {
       alert(`${computerNominatedPokemon.name} wins!`);
     } else {
       alert("It's a tie!");
+      return;
     }
   } else {
     setTimeout(battle, 10); // if either HP is falsy, wait 10ms and try battle function again
