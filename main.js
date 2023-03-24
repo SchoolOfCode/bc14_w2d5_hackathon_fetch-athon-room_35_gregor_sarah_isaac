@@ -20,18 +20,44 @@
 // if player pokemon faints, they can choose another pokemon from their team
 // if computer pokemon faints, they can choose, at random, another pokemon from their team
 
+/* bonus task: create a for loop that pulls the name of each pokemon and stores them in a dropdown list that can 
+be used to select userPokemon
+*/
+let player = 1;
+let computer = 0;
+let computerNominatedPokemon = {}
+let playerNominatedPokemon = {}
+let playerImage = document.querySelector("#player-image");
+let computerImage = document.querySelector("#computer-image");
 
-
-
-let userPokemon1 = prompt("Enter a pokemon name");
-// choose a random number between 1 and 1008 for the computer's pokemon
-let computerPokemon1 = Math.floor((Math.random() * 1008) + 1);
-// create an async function to fetch the computer's pokemon
-async function fetchComputerPokemon() {
-    let apiRequest1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${computerPokemon1}/`);
+let userPokemon1 = prompt("Enter a gen 1 pokemon name");
+// choose a random number between 1 and 151 for the computer's pokemon
+let computerPokemon1 = Math.floor((Math.random() * 151) + 1);
+// create an async function to fetch the pokemon
+async function fetchPokemon(pokemon, user) {
+    let apiRequest1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}/`);
     let apiData1 = await apiRequest1.json();
     console.log(apiData1);
+    if (user === 1) {
+        playerNominatedPokemon.name = apiData1.name
+        playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat
+        playerNominatedPokemon.sprite = apiData1.sprites.front_default
+        //playerImage.src = playerNominatedPokemon.sprite;
+    }
+    else {
+        computerNominatedPokemon.name = apiData1.name
+        computerNominatedPokemon.baseHP = apiData1.stats[0].base_stat
+        computerNominatedPokemon.sprite = apiData1.sprites.front_default
+        //computerImage.src = computerNominatedPokemon.sprite;
+    }
 }
+// call the function
+fetchPokemon(computerPokemon1, computer);
+fetchPokemon(userPokemon1, player); 
+console.log(computerNominatedPokemon);
+console.log(playerNominatedPokemon);
 
-fetchComputerPokemon();
+
+
+
 
