@@ -25,40 +25,56 @@ be used to select userPokemon
 */
 let player = 1;
 let computer = 0;
+let userPokemon1;
+let computerPokemon1;
 let computerNominatedPokemon = {};
 let playerNominatedPokemon = {};
 let playerImage = document.querySelector("#player-image");
 let computerImage = document.querySelector("#computer-image");
+let playButton = document.querySelector("#play-button");
 
-let userPokemon1 = prompt("Enter a gen 1 pokemon name");
-// choose a random number between 1 and 151 for the computer's pokemon
-let computerPokemon1 = Math.floor(Math.random() * 151 + 1);
 // create an async function to fetch the pokemon
 async function fetchPokemon(pokemon, user) {
-  let apiRequest1 = await fetch(
-    `https://pokeapi.co/api/v2/pokemon/${pokemon}/`
-  );
-  let apiData1 = await apiRequest1.json();
-
-  if (user === 1) {
-    playerNominatedPokemon.name = apiData1.name;
-    playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
-    playerNominatedPokemon.sprite = apiData1.sprites.front_default;
-    console.log(playerNominatedPokemon.baseHP);
-    //playerImage.src = playerNominatedPokemon.sprite;
-  } else {
-    computerNominatedPokemon.name = apiData1.name;
-    computerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
-    computerNominatedPokemon.sprite = apiData1.sprites.front_default;
-    console.log(computerNominatedPokemon.baseHP);
-    //computerImage.src = computerNominatedPokemon.sprite;
+    let apiRequest1 = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokemon}/`
+    );
+    let apiData1 = await apiRequest1.json();
+  
+    if (user === 1) {
+      playerNominatedPokemon.name = apiData1.name;
+      playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
+      playerNominatedPokemon.sprite = apiData1.sprites.front_default;
+      console.log(playerNominatedPokemon.baseHP);
+      //playerImage.src = playerNominatedPokemon.sprite;
+    } else {
+      computerNominatedPokemon.name = apiData1.name;
+      computerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
+      computerNominatedPokemon.sprite = apiData1.sprites.front_default;
+      console.log(computerNominatedPokemon.baseHP);
+      //computerImage.src = computerNominatedPokemon.sprite;
+    }
   }
+
+function startGame() {
+    // reset the pokemon objects to empty objects so that the API request can be made again before the battle function shows the winner
+    computerNominatedPokemon = {};
+    playerNominatedPokemon = {};
+    userPokemon1 = prompt("Enter a gen 1 pokemon name");
+    // convert user input to lowercase
+    userPokemon1 = userPokemon1.toLowerCase();
+    // choose a random number between 1 and 151 for the computer's pokemon
+    computerPokemon1 = Math.floor(Math.random() * 151 + 1);
+    // call the function twice to fetch the pokemon for each player
+    fetchPokemon(computerPokemon1, computer);
+    fetchPokemon(userPokemon1, player);
+    console.log(computerNominatedPokemon);
+    console.log(playerNominatedPokemon);
 }
-// call the function
-fetchPokemon(computerPokemon1, computer);
-fetchPokemon(userPokemon1, player);
-console.log(computerNominatedPokemon);
-console.log(playerNominatedPokemon);
+
+
+
+
+
 
 // create a function to battle the pokemon
 
@@ -79,4 +95,5 @@ function battle() {
   }
 }
 
-battle();
+playButton.addEventListener("click", startGame);
+playButton.addEventListener("click", battle);
