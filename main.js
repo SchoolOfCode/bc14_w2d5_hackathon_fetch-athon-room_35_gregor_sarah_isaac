@@ -32,6 +32,10 @@ let playerNominatedPokemon = {};
 let playerImage = document.querySelector("#player-image");
 let computerImage = document.querySelector("#computer-image");
 let playButton = document.querySelector("#play-button");
+let playerPokemonName = document.querySelector("#player-pokemon-name");
+let computerPokemonName = document.querySelector("#computer-pokemon-name");
+let playerHP = document.querySelector("#player-hp");
+let computerHP = document.querySelector("#computer-hp");
 
 // create an async function to fetch the pokemon
 async function fetchPokemon(pokemon, user) {
@@ -45,13 +49,37 @@ async function fetchPokemon(pokemon, user) {
       playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
       playerNominatedPokemon.sprite = apiData1.sprites.front_default;
       console.log(playerNominatedPokemon.baseHP);
-      //playerImage.src = playerNominatedPokemon.sprite;
+      playerImage.src = playerNominatedPokemon.sprite;
+      playerPokemonName.textContent = apiData1.name;
+      playerHP.textContent = `Base HP = ${playerNominatedPokemon.baseHP}`;
     } else {
       computerNominatedPokemon.name = apiData1.name;
       computerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
       computerNominatedPokemon.sprite = apiData1.sprites.front_default;
       console.log(computerNominatedPokemon.baseHP);
-      //computerImage.src = computerNominatedPokemon.sprite;
+      computerImage.src = computerNominatedPokemon.sprite;
+    computerPokemonName.textContent = apiData1.name;
+    computerHP.textContent = `Base HP = ${computerNominatedPokemon.baseHP}`;
+    }
+  }
+
+// create a function to battle the pokemon
+
+function battle() {
+    if (playerNominatedPokemon.baseHP && computerNominatedPokemon.baseHP) {
+      // checking if truthy values for both HPs
+      if (playerNominatedPokemon.baseHP > computerNominatedPokemon.baseHP) {
+        alert(`${playerNominatedPokemon.name} wins!`);
+      } else if (
+        playerNominatedPokemon.baseHP < computerNominatedPokemon.baseHP
+      ) {
+        alert(`${computerNominatedPokemon.name} wins!`);
+      } else {
+        alert("It's a tie!");
+        return;
+      }
+    } else {
+      setTimeout(battle, 10); // if either HP is falsy, wait 10ms and try battle function again
     }
   }
 
@@ -69,6 +97,7 @@ function startGame() {
     fetchPokemon(userPokemon1, player);
     console.log(computerNominatedPokemon);
     console.log(playerNominatedPokemon);
+    battle();
 }
 
 
@@ -76,25 +105,5 @@ function startGame() {
 
 
 
-// create a function to battle the pokemon
-
-function battle() {
-  if (playerNominatedPokemon.baseHP && computerNominatedPokemon.baseHP) {
-    // checking if truthy values for both HPs
-    if (playerNominatedPokemon.baseHP > computerNominatedPokemon.baseHP) {
-      alert(`${playerNominatedPokemon.name} wins!`);
-    } else if (
-      playerNominatedPokemon.baseHP < computerNominatedPokemon.baseHP
-    ) {
-      alert(`${computerNominatedPokemon.name} wins!`);
-    } else {
-      alert("It's a tie!");
-      return;
-    }
-  } else {
-    setTimeout(battle, 10); // if either HP is falsy, wait 10ms and try battle function again
-  }
-}
 
 playButton.addEventListener("click", startGame);
-playButton.addEventListener("click", battle);
