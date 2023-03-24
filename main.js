@@ -23,13 +23,14 @@
 /* bonus task: create a for loop that pulls the name of each pokemon and stores them in a dropdown list that can 
 be used to select userPokemon
 */
-let player = 1;
-let computer = 0;
+let player = 'player';
+let computer;
 let userPokemon1;
 let computerPokemon1;
 let computerNominatedPokemon = {};
 let playerNominatedPokemon = {};
 let playerImage = document.querySelector("#player-image");
+let startingImageSrc = playerImage.src;
 let computerImage = document.querySelector("#computer-image");
 let playButton = document.querySelector("#play-button");
 let playerPokemonName = document.querySelector("#player-pokemon-name");
@@ -41,14 +42,23 @@ let scoreTracker = document.querySelector("#score-tracker");
 let playerScore = 0;
 let computerScore = 0;
 
-// create an async function to fetch the pokemon
+// create an async function to fetch the pokemon from the api
 async function fetchPokemon(pokemon, user) {
   let apiRequest1 = await fetch(
     `https://pokeapi.co/api/v2/pokemon/${pokemon}/`
   );
-  let apiData1 = await apiRequest1.json();
-
-  if (user === 1) {
+  if (apiRequest1.status === 404) {; // if the pokemon is not found, throw up an alert and reset the game
+    winnerAnnounced.textContent = "Try Again with a real Pokemon name!";
+    playerImage.src = startingImageSrc;
+    playerPokemonName.textContent = "Pokemon";
+    playerHP.textContent = "Base HP";
+    computerImage.src = startingImageSrc;
+    computerPokemonName.textContent = "Pokemon";
+    computerHP.textContent = "Base HP";
+    return;
+  }
+  let apiData1 = await apiRequest1.json(); // convert the response to json
+  if (user === 'player') { // if the user is the player, assign the pokemon to the player object
     playerNominatedPokemon.name = apiData1.name;
     playerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
     playerNominatedPokemon.sprite = apiData1.sprites.front_default;
@@ -56,7 +66,7 @@ async function fetchPokemon(pokemon, user) {
     playerImage.src = playerNominatedPokemon.sprite;
     playerPokemonName.textContent = apiData1.name;
     playerHP.textContent = `Base HP = ${playerNominatedPokemon.baseHP}`;
-  } else {
+  } else { // if the user is the computer, assign the pokemon to the computer object
     computerNominatedPokemon.name = apiData1.name;
     computerNominatedPokemon.baseHP = apiData1.stats[0].base_stat;
     computerNominatedPokemon.sprite = apiData1.sprites.front_default;
@@ -70,22 +80,19 @@ async function fetchPokemon(pokemon, user) {
 // create a function to battle the pokemon
 
 function battle() {
-  if (playerNominatedPokemon.baseHP && computerNominatedPokemon.baseHP) {
-    // checking if truthy values for both HPs
-    if (playerNominatedPokemon.baseHP > computerNominatedPokemon.baseHP) {
+  if (playerNominatedPokemon.baseHP && computerNominatedPokemon.baseHP) { // checking if truthy values for both HPs
+    if (playerNominatedPokemon.baseHP > computerNominatedPokemon.baseHP) { // if player's HP is greater than computer's HP, player wins
       winnerAnnounced.textContent = `${playerNominatedPokemon.name} wins!`;
       playerScore++;
       scoreTracker.textContent = `${playerScore} - ${computerScore}`;
       return;
-    } else if (
-      playerNominatedPokemon.baseHP < computerNominatedPokemon.baseHP
-    ) {
+    } else if (playerNominatedPokemon.baseHP < computerNominatedPokemon.baseHP) { // if computer's HP is greater than player's HP, computer wins
       winnerAnnounced.textContent = `${computerNominatedPokemon.name} wins!`;
       computerScore++;
       scoreTracker.textContent = `${playerScore} - ${computerScore}`;
       return;
     } else {
-      winnerAnnounced.textContent = "It's a tie!";
+      winnerAnnounced.textContent = "It's a tie!"; // if both HPs are equal, it's a tie
       return;
     }
   } else {
@@ -95,19 +102,20 @@ function battle() {
 
 function startGame() {
   // reset the pokemon objects to empty objects so that the API request can be made again before the battle function shows the winner
-  computerNominatedPokemon = {};
+  computerNominatedPokemon = {}; // reset the pokemon objects to empty objects so that the API request can be made again before the battle function shows the winner
   playerNominatedPokemon = {};
-  userPokemon1 = prompt("Enter a gen 1 pokemon name");
+  userPokemon1 = prompt("Enter a gen 1 pokemon name"); // prompt the user to enter a pokemon name
   // convert user input to lowercase
   userPokemon1 = userPokemon1.toLowerCase();
   // choose a random number between 1 and 151 for the computer's pokemon
   computerPokemon1 = Math.floor(Math.random() * 151 + 1);
   // call the function twice to fetch the pokemon for each player
-  fetchPokemon(computerPokemon1, computer);
   fetchPokemon(userPokemon1, player);
-  console.log(computerNominatedPokemon);
-  console.log(playerNominatedPokemon);
-  battle();
+  fetchPokemon(computerPokemon1, computer);
+  battle(); // call the battle function to determine the winner
 }
 
-playButton.addEventListener("click", startGame);
+playButton.addEventListener("click", startGame); // add an event listener to the play button to start the game
+
+
+
